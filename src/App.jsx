@@ -1,5 +1,45 @@
 import "./App.css";
-import { NavLink, Routes, Route, Navigate } from "react-router-dom";
+import {
+  NavLink,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
+
+/* =========================
+   AUTH (LOCAL DEMO)
+========================= */
+const LS_USERS = "medilink_users";
+const LS_SESSION = "medilink_session";
+
+function loadUsers() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_USERS)) || [];
+  } catch {
+    return [];
+  }
+}
+function saveUsers(users) {
+  localStorage.setItem(LS_USERS, JSON.stringify(users));
+}
+function setSession(session) {
+  localStorage.setItem(LS_SESSION, JSON.stringify(session));
+}
+function getSession() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_SESSION)) || null;
+  } catch {
+    return null;
+  }
+}
+function clearSession() {
+  localStorage.removeItem(LS_SESSION);
+}
+
+const ADMIN_DEMO = { email: "admin@medilink.com", password: "admin123" };
 
 /* =========================
    BANGLADESH DEMO DATA
@@ -8,7 +48,8 @@ const patient = {
   name: "Robiul Islam",
   city: "Dhaka",
   email: "robiulislam@gmail.com",
-  avatar: "https://scontent.fdac207-1.fna.fbcdn.net/v/t39.30808-6/462165363_1768680817291622_7524753487152687250_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFP1qYiOZDevYzLgriSUnUl1OGZx3wdElnU4ZnHfB0SWa4AWpN3bvzZ15WOza_e7h4VbLUZNRdRKJFmIkTfXT1q&_nc_ohc=RqCLLc2uICUQ7kNvwE9vJ_q&_nc_oc=Adl0th49IRw8LGzbK5P-Xb8fgp0N-PCZKtemHoHDt8k9iNJZPJP7D90Cr1ojuLtYvVaoZvV4jFQznP-qtnd3TeG1&_nc_zt=23&_nc_ht=scontent.fdac207-1.fna&_nc_gid=Fw4qr9agIBh3MoeHCZhz2w&oh=00_AfrwFkT-welGNwmKbN9FxRMTe7TIQajYQP2CH8gmHdttjw&oe=696ADBAC",
+  avatar:
+    "https://scontent.fdac207-1.fna.fbcdn.net/v/t39.30808-6/462165363_1768680817291622_7524753487152687250_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFP1qYiOZDevYzLgriSUnUl1OGZx3wdElnU4ZnHfB0SWa4AWpN3bvzZ15WOza_e7h4VbLUZNRdRKJFmIkTfXT1q&_nc_ohc=RqCLLc2uICUQ7kNvwE9vJ_q&_nc_oc=Adl0th49IRw8LGzbK5P-Xb8fgp0N-PCZKtemHoHDt8k9iNJZPJP7D90Cr1ojuLtYvVaoZvV4jFQznP-qtnd3TeG1&_nc_zt=23&_nc_ht=scontent.fdac207-1.fna&_nc_gid=Fw4qr9agIBh3MoeHCZhz2w&oh=00_AfrwFkT-welGNwmKbN9FxRMTe7TIQajYQP2CH8gmHdttjw&oe=696ADBAC",
   vitals: {
     heartRate: "76 bpm",
     bloodPressure: "118/78",
@@ -102,6 +143,294 @@ function Stars({ value }) {
           </span>
         );
       })}
+    </div>
+  );
+}
+
+function RoleTabs({ role, setRole }) {
+  const roles = ["Patient", "Doctor", "Admin"];
+  return (
+    <div className="roleTabs">
+      {roles.map((r) => (
+        <button
+          key={r}
+          className={`roleTab ${role === r ? "active" : ""}`}
+          onClick={() => setRole(r)}
+          type="button"
+        >
+          {r}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* =========================
+   AUTH PAGES
+========================= */
+function LoginPage() {
+  const [role, setRole] = useState("Patient");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [msg, setMsg] = useState("");
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const s = getSession();
+    if (s) nav("/home", { replace: true });
+  }, [nav]);
+
+  function handleLogin(e) {
+    e.preventDefault();
+    setMsg("");
+
+    if (role === "Admin") {
+      if (email === ADMIN_DEMO.email && pass === ADMIN_DEMO.password) {
+        setSession({ role: "Admin", email });
+        nav("/home", { replace: true });
+      } else {
+        setMsg(
+          "Invalid admin credentials. (Try admin@medilink.com / admin123)"
+        );
+      }
+      return;
+    }
+
+    const users = loadUsers();
+    const u = users.find((x) => x.email === email && x.role === role);
+
+    if (!u) {
+      setMsg("Account not found for this role/email.");
+      return;
+    }
+    if (u.password !== pass) {
+      setMsg("Wrong password.");
+      return;
+    }
+    if (u.role === "Doctor" && u.status !== "Approved") {
+      setMsg("Doctor account is not approved yet (Pending/Rejected).");
+      return;
+    }
+
+    setSession({
+      role: u.role,
+      email: u.email,
+      name: u.name,
+      status: u.status,
+    });
+    nav("/home", { replace: true });
+  }
+
+  return (
+    <div className="authWrap">
+      <div className="authCard">
+        <div className="authHeader">
+          <div className="authLogo">+</div>
+          <div>
+            <div className="authBrand">MediLink+</div>
+            <div className="authTag">Secure healthcare, faster.</div>
+          </div>
+        </div>
+
+        <div className="authTitle">MediLink+ Login</div>
+        <div className="authSub">Login as Patient / Doctor / Admin</div>
+
+        <RoleTabs role={role} setRole={setRole} />
+
+        <form className="authForm" onSubmit={handleLogin}>
+          <div>
+            <div className="label">Email</div>
+            <input
+              className="input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@mail.com"
+              required
+            />
+          </div>
+
+          <div>
+            <div className="label">Password</div>
+            <input
+              className="input"
+              type="password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              placeholder="********"
+              required
+            />
+          </div>
+
+          {msg ? <div className="authMsg">{msg}</div> : null}
+
+          <button className="btn" type="submit" style={{ width: "100%" }}>
+            Login
+          </button>
+
+          <div className="authHint">
+            Don’t have an account?{" "}
+            <button
+              type="button"
+              className="linkBtn"
+              onClick={() => nav("/register")}
+            >
+              Register
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function RegisterPage() {
+  const [role, setRole] = useState("Patient");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [spec, setSpec] = useState("Cardiology");
+  const [msg, setMsg] = useState("");
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const s = getSession();
+    if (s) nav("/home", { replace: true });
+  }, [nav]);
+
+  function handleRegister(e) {
+    e.preventDefault();
+    setMsg("");
+
+    if (role === "Admin") {
+      setMsg(
+        "Admin registration is disabled in demo. Use admin@medilink.com / admin123"
+      );
+      return;
+    }
+
+    const users = loadUsers();
+    const exists = users.some((u) => u.email === email && u.role === role);
+    if (exists) {
+      setMsg("Account already exists for this role & email.");
+      return;
+    }
+
+    const newUser = {
+      id: Date.now(),
+      role,
+      name,
+      email,
+      password: pass,
+      status: role === "Doctor" ? "Pending" : "Approved",
+      specialization: role === "Doctor" ? spec : null,
+      createdAt: new Date().toISOString(),
+    };
+
+    saveUsers([newUser, ...users]);
+
+    if (role === "Doctor") {
+      setMsg(
+        "Doctor account created! Status: Pending (Admin verification needed)."
+      );
+    } else {
+      setMsg("Patient account created! You can login now.");
+    }
+  }
+
+  return (
+    <div className="authWrap">
+      <div className="authCard">
+        <div className="authHeader">
+          <div className="authLogo">+</div>
+          <div>
+            <div className="authBrand">MediLink+</div>
+            <div className="authTag">Secure healthcare, faster.</div>
+          </div>
+        </div>
+        <div className="authTitle">Create Account</div>
+        <div className="authSub">Register as Patient or Doctor</div>
+
+        <RoleTabs role={role} setRole={setRole} />
+
+        <form className="authForm" onSubmit={handleRegister}>
+          <div>
+            <div className="label">Full Name</div>
+            <input
+              className="input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              required
+              disabled={role === "Admin"}
+            />
+          </div>
+
+          <div>
+            <div className="label">Email</div>
+            <input
+              className="input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@mail.com"
+              required
+              disabled={role === "Admin"}
+            />
+          </div>
+
+          {role === "Doctor" ? (
+            <div>
+              <div className="label">Specialization</div>
+              <select
+                className="select"
+                value={spec}
+                onChange={(e) => setSpec(e.target.value)}
+              >
+                <option>Cardiology</option>
+                <option>Dermatology</option>
+                <option>Orthopedics</option>
+                <option>ENT</option>
+                <option>Neurology</option>
+                <option>Pediatrics</option>
+              </select>
+            </div>
+          ) : null}
+
+          <div>
+            <div className="label">Password</div>
+            <input
+              className="input"
+              type="password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              placeholder="********"
+              required
+              disabled={role === "Admin"}
+            />
+          </div>
+
+          {msg ? <div className="authMsg">{msg}</div> : null}
+
+          <button
+            className="btn"
+            type="submit"
+            style={{ width: "100%" }}
+            disabled={role === "Admin"}
+          >
+            Register
+          </button>
+
+          <div className="authHint">
+            Already have an account?{" "}
+            <button
+              type="button"
+              className="linkBtn"
+              onClick={() => nav("/login")}
+            >
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
@@ -231,7 +560,9 @@ function HomePage() {
                     </div>
                   </div>
 
-                  <div className="metaRow">📍 {d.clinic} · {d.distance}</div>
+                  <div className="metaRow">
+                    📍 {d.clinic} · {d.distance}
+                  </div>
                 </div>
 
                 <div className="rightCol">
@@ -343,7 +674,9 @@ function AppointmentCard({ a }) {
           <div className="apptSub">
             {a.specialty} • {a.hospital}
           </div>
-          <div className="apptMeta">🕒 {a.time} • 📍 {a.location}</div>
+          <div className="apptMeta">
+            🕒 {a.time} • 📍 {a.location}
+          </div>
         </div>
       </div>
 
@@ -789,7 +1122,14 @@ function SettingsPage() {
                 <div className="panelMain">Logout</div>
                 <div className="panelSub">Sign out from this device.</div>
               </div>
-              <button className="btn" style={{ background: "#b42318" }}>
+              <button
+                className="btn"
+                style={{ background: "#b42318" }}
+                onClick={() => {
+                  clearSession();
+                  window.location.href = "/login";
+                }}
+              >
                 Logout
               </button>
             </div>
@@ -801,21 +1141,40 @@ function SettingsPage() {
 }
 
 /* =========================
-   APP ROOT
+   APP ROOT (AUTH PAGES ALADA)
 ========================= */
 export default function App() {
-  return (
-    <div className="app">
-      <Sidebar />
+  const location = useLocation();
+  const session = getSession();
 
-      <main className="main">
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
+
+  const protectedPaths = ["/home", "/appointments", "/doctors", "/reports", "/settings"];
+  const isProtectedPath = protectedPaths.includes(location.pathname);
+
+  if (!session && isProtectedPath) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className={isAuthPage ? "authShell" : "app"}>
+      {!isAuthPage ? <Sidebar /> : null}
+
+      <main className={isAuthPage ? "authMain" : "main"}>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
           <Route path="/home" element={<HomePage />} />
           <Route path="/appointments" element={<AppointmentsPage />} />
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
     </div>
