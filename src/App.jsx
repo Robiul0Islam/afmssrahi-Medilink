@@ -1,12 +1,5 @@
 import "./App.css";
-import {
-  NavLink,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 /* =========================
@@ -135,10 +128,7 @@ function Stars({ value }) {
         const isFull = i < full;
         const isHalf = i === full && half;
         return (
-          <span
-            key={i}
-            className={`star ${isFull ? "full" : isHalf ? "half" : ""}`}
-          >
+          <span key={i} className={`star ${isFull ? "full" : isHalf ? "half" : ""}`}>
             ★
           </span>
         );
@@ -189,9 +179,7 @@ function LoginPage() {
         setSession({ role: "Admin", email });
         nav("/home", { replace: true });
       } else {
-        setMsg(
-          "Invalid admin credentials. (Try admin@medilink.com / admin123)"
-        );
+        setMsg("Invalid admin credentials. (Try admin@medilink.com / admin123)");
       }
       return;
     }
@@ -269,11 +257,7 @@ function LoginPage() {
 
           <div className="authHint">
             Don’t have an account?{" "}
-            <button
-              type="button"
-              className="linkBtn"
-              onClick={() => nav("/register")}
-            >
+            <button type="button" className="linkBtn" onClick={() => nav("/register")}>
               Register
             </button>
           </div>
@@ -302,9 +286,7 @@ function RegisterPage() {
     setMsg("");
 
     if (role === "Admin") {
-      setMsg(
-        "Admin registration is disabled in demo. Use admin@medilink.com / admin123"
-      );
+      setMsg("Admin registration is disabled in demo. Use admin@medilink.com / admin123");
       return;
     }
 
@@ -329,9 +311,7 @@ function RegisterPage() {
     saveUsers([newUser, ...users]);
 
     if (role === "Doctor") {
-      setMsg(
-        "Doctor account created! Status: Pending (Admin verification needed)."
-      );
+      setMsg("Doctor account created! Status: Pending (Admin verification needed).");
     } else {
       setMsg("Patient account created! You can login now.");
     }
@@ -380,11 +360,7 @@ function RegisterPage() {
           {role === "Doctor" ? (
             <div>
               <div className="label">Specialization</div>
-              <select
-                className="select"
-                value={spec}
-                onChange={(e) => setSpec(e.target.value)}
-              >
+              <select className="select" value={spec} onChange={(e) => setSpec(e.target.value)}>
                 <option>Cardiology</option>
                 <option>Dermatology</option>
                 <option>Orthopedics</option>
@@ -410,22 +386,13 @@ function RegisterPage() {
 
           {msg ? <div className="authMsg">{msg}</div> : null}
 
-          <button
-            className="btn"
-            type="submit"
-            style={{ width: "100%" }}
-            disabled={role === "Admin"}
-          >
+          <button className="btn" type="submit" style={{ width: "100%" }} disabled={role === "Admin"}>
             Register
           </button>
 
           <div className="authHint">
             Already have an account?{" "}
-            <button
-              type="button"
-              className="linkBtn"
-              onClick={() => nav("/login")}
-            >
+            <button type="button" className="linkBtn" onClick={() => nav("/login")}>
               Login
             </button>
           </div>
@@ -449,10 +416,7 @@ function Sidebar() {
       </div>
 
       <nav className="nav">
-        <NavLink
-          to="/home"
-          className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-        >
+        <NavLink to="/home" className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}>
           🏠 <span>Home</span>
         </NavLink>
 
@@ -463,24 +427,19 @@ function Sidebar() {
           📅 <span>Appointments</span>
         </NavLink>
 
-        <NavLink
-          to="/doctors"
-          className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-        >
+        <NavLink to="/doctors" className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}>
           🩺 <span>Doctors</span>
         </NavLink>
 
-        <NavLink
-          to="/reports"
-          className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-        >
+        <NavLink to="/chat" className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}>
+          💬 <span>Doctor Chat</span>
+        </NavLink>
+
+        <NavLink to="/reports" className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}>
           📄 <span>Reports</span>
         </NavLink>
 
-        <NavLink
-          to="/settings"
-          className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-        >
+        <NavLink to="/settings" className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}>
           ⚙️ <span>Settings</span>
         </NavLink>
       </nav>
@@ -560,9 +519,7 @@ function HomePage() {
                     </div>
                   </div>
 
-                  <div className="metaRow">
-                    📍 {d.clinic} · {d.distance}
-                  </div>
+                  <div className="metaRow">📍 {d.clinic} · {d.distance}</div>
                 </div>
 
                 <div className="rightCol">
@@ -581,10 +538,7 @@ function HomePage() {
           <div className="shows">
             {shows.map((s) => (
               <div key={s.id} className="card showCard">
-                <div
-                  className="showImg"
-                  style={{ backgroundImage: `url(${s.img})` }}
-                />
+                <div className="showImg" style={{ backgroundImage: `url(${s.img})` }} />
                 <div className="showBody">
                   <div className="showTitle">{s.title}</div>
                   <div className="showBy">{s.by}</div>
@@ -602,9 +556,7 @@ function HomePage() {
               <div className="dot" />
               <div>
                 <div className="panelMain">Dr. Mahmud Hasan</div>
-                <div className="panelSub">
-                  Today • 7:30 PM • Square Hospitals Ltd., Dhaka
-                </div>
+                <div className="panelSub">Today • 7:30 PM • Square Hospitals Ltd., Dhaka</div>
               </div>
             </div>
             <div className="panelActions">
@@ -757,15 +709,11 @@ function AppointmentsPage() {
         </div>
         <div className="card statCard">
           <div className="statK">Completed</div>
-          <div className="statV">
-            {past.filter((p) => p.status === "Completed").length}
-          </div>
+          <div className="statV">{past.filter((p) => p.status === "Completed").length}</div>
         </div>
         <div className="card statCard">
           <div className="statK">Cancelled</div>
-          <div className="statV">
-            {past.filter((p) => p.status === "Cancelled").length}
-          </div>
+          <div className="statV">{past.filter((p) => p.status === "Cancelled").length}</div>
         </div>
         <div className="card statCard">
           <div className="statK">Patient</div>
@@ -866,10 +814,7 @@ function DoctorsPage() {
       <div className="doctorTools">
         <div className="toolSearch">
           <span className="searchIcon">🔎</span>
-          <input
-            className="searchInput"
-            placeholder="Search by doctor name, specialty..."
-          />
+          <input className="searchInput" placeholder="Search by doctor name, specialty..." />
         </div>
 
         <select className="select" defaultValue="All">
@@ -923,6 +868,126 @@ function DoctorsPage() {
 }
 
 /* =========================
+   DOCTOR CHAT PAGE
+========================= */
+function ChatPage() {
+  const [activeDoctor, setActiveDoctor] = useState(doctors[0]);
+  const [text, setText] = useState("");
+  const [threads, setThreads] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("medilink_chat_threads")) || {};
+    } catch {
+      return {};
+    }
+  });
+
+  const fallback = [
+    {
+      id: 1,
+      from: "doctor",
+      time: "Now",
+      text: `Hello! I’m ${activeDoctor.name}. How can I help you today?`,
+    },
+  ];
+
+  const messages = threads[activeDoctor.id] || fallback;
+
+  function persist(nextThreads) {
+    setThreads(nextThreads);
+    localStorage.setItem("medilink_chat_threads", JSON.stringify(nextThreads));
+  }
+
+  function send() {
+    const t = text.trim();
+    if (!t) return;
+
+    const prev = threads[activeDoctor.id] || messages;
+    const next = {
+      ...threads,
+      [activeDoctor.id]: [...prev, { id: Date.now(), from: "me", time: "Now", text: t }],
+    };
+
+    persist(next);
+    setText("");
+  }
+
+  return (
+    <div className="container">
+      <Topbar
+        title={<>Doctor Chat</>}
+        subtitle={`Chat with specialists in ${patient.city}, Bangladesh`}
+        searchPlaceholder="Search chats..."
+      />
+
+      <div className="chatGrid">
+        <div className="card chatList">
+          <div className="panelTitle">Doctors</div>
+
+          <div className="chatDoctorList">
+            {doctors.map((d) => (
+              <button
+                key={d.id}
+                className={`chatDoctor ${activeDoctor.id === d.id ? "active" : ""}`}
+                onClick={() => setActiveDoctor(d)}
+                type="button"
+              >
+                <img className="chatAvatar" src={d.avatar} alt={d.name} />
+                <div className="chatDoctorInfo">
+                  <div className="chatDoctorName">{d.name}</div>
+                  <div className="chatDoctorSub">{d.specialty}</div>
+                </div>
+                <div className="chatPill">{d.status}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="card chatBox">
+          <div className="chatHeader">
+            <div className="chatHeaderLeft">
+              <img className="chatAvatarLarge" src={activeDoctor.avatar} alt={activeDoctor.name} />
+              <div>
+                <div className="chatHeaderName">{activeDoctor.name}</div>
+                <div className="chatHeaderSub">{activeDoctor.specialty}</div>
+              </div>
+            </div>
+            <div className="chatHeaderRight">
+              <span className="chatOnline">{activeDoctor.status}</span>
+            </div>
+          </div>
+
+          <div className="chatMessages">
+            {messages.map((m) => (
+              <div key={m.id} className={`chatMsgRow ${m.from === "me" ? "me" : "doctor"}`}>
+                <div className="chatBubble">
+                  <div className="chatText">{m.text}</div>
+                  <div className="chatTime">{m.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="chatInputRow">
+            <input
+              className="input"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Type your message..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") send();
+              }}
+            />
+            <button className="btn" type="button" onClick={send}>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
    REPORTS PAGE
 ========================= */
 function ReportsPage() {
@@ -964,9 +1029,7 @@ function ReportsPage() {
       <div className="reportsTop">
         <div className="card reportUpload">
           <div className="reportUploadTitle">Upload New Report</div>
-          <div className="reportUploadSub">
-            Upload PDF/Image. Keep your reports organized.
-          </div>
+          <div className="reportUploadSub">Upload PDF/Image. Keep your reports organized.</div>
           <button className="btn" style={{ width: "fit-content" }}>
             Upload
           </button>
@@ -981,15 +1044,11 @@ function ReportsPage() {
             </div>
             <div className="summaryItem">
               <div className="k">Verified</div>
-              <div className="v">
-                {reports.filter((r) => r.status === "Verified").length}
-              </div>
+              <div className="v">{reports.filter((r) => r.status === "Verified").length}</div>
             </div>
             <div className="summaryItem">
               <div className="k">Pending</div>
-              <div className="v">
-                {reports.filter((r) => r.status === "Pending").length}
-              </div>
+              <div className="v">{reports.filter((r) => r.status === "Pending").length}</div>
             </div>
           </div>
         </div>
@@ -1015,9 +1074,7 @@ function ReportsPage() {
             </div>
 
             <div className="reportRight">
-              <div className={`tag ${r.status === "Verified" ? "ok" : "warn"}`}>
-                {r.status}
-              </div>
+              <div className={`tag ${r.status === "Verified" ? "ok" : "warn"}`}>{r.status}</div>
               <div className="apptBtns">
                 <button className="btn ghost">Download</button>
                 <button className="btn">View</button>
@@ -1047,11 +1104,7 @@ function SettingsPage() {
           <div className="panelTitle">Profile</div>
 
           <div className="profileRow">
-            <img
-              className="profileAvatar"
-              src={patient.avatar}
-              alt={patient.name}
-            />
+            <img className="profileAvatar" src={patient.avatar} alt={patient.name} />
             <div>
               <div className="panelMain">{patient.name}</div>
               <div className="panelSub">{patient.city}, Bangladesh</div>
@@ -1147,10 +1200,9 @@ export default function App() {
   const location = useLocation();
   const session = getSession();
 
-  const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/register";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
-  const protectedPaths = ["/home", "/appointments", "/doctors", "/reports", "/settings"];
+  const protectedPaths = ["/home", "/appointments", "/doctors", "/chat", "/reports", "/settings"];
   const isProtectedPath = protectedPaths.includes(location.pathname);
 
   if (!session && isProtectedPath) {
@@ -1171,6 +1223,7 @@ export default function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/appointments" element={<AppointmentsPage />} />
           <Route path="/doctors" element={<DoctorsPage />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
 
