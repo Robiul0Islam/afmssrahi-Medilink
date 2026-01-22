@@ -11,7 +11,7 @@
 
 *{box-sizing:border-box}
 
-/* FIX: Vite default index.css (body flex + white text) override */
+/* FIX: Vite default index.css override */
 :root{ color-scheme: light; }
 
 body{
@@ -25,10 +25,10 @@ body{
 #root{ width:100%; }
 
 /* Make input text readable everywhere */
-.input, .select, .searchInput{
+.input, .select, .searchInput, textarea{
   color: var(--text);
 }
-.input::placeholder, .searchInput::placeholder{
+.input::placeholder, .searchInput::placeholder, textarea::placeholder{
   color: #98a6c6;
 }
 
@@ -122,11 +122,6 @@ body{
   padding: 10px;
   border-radius: 18px;
 }
-.userAvatar{
-  width:40px;height:40px;border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.2);
-  object-fit: cover;
-}
 .userName{font-weight:900}
 .userEmail{font-size:12px;opacity:.8}
 
@@ -213,6 +208,16 @@ body{
 .list{display:grid;gap:12px}
 
 /* =========================
+   STARS
+========================= */
+.ratingRow{display:flex;align-items:center;gap:8px;margin:6px 0}
+.stars{display:flex;gap:2px}
+.star{font-size:14px;opacity:.25}
+.star.full{opacity:1;color:#f59e0b}
+.star.half{opacity:.6;color:#f59e0b}
+.ratingText{font-size:13px;color:var(--muted)}
+
+/* =========================
    HOME - DOCTOR CARD
 ========================= */
 .doctorCard{
@@ -226,15 +231,8 @@ body{
   object-fit:cover;border:1px solid var(--line);
 }
 .docName{font-weight:900}
+.docNameDark{ color: var(--text); } /* requested: doctor name black */
 .docSpec{color:var(--muted);font-weight:800;font-size:13px;margin-top:2px}
-
-.ratingRow{display:flex;align-items:center;gap:8px;margin:6px 0}
-.stars{display:flex;gap:2px}
-.star{font-size:14px;opacity:.25}
-.star.full{opacity:1;color:#f59e0b}
-.star.half{opacity:.6;color:#f59e0b}
-.ratingText{font-size:13px;color:var(--muted)}
-
 .metaRow{color:var(--muted);font-size:13px}
 
 .rightCol{display:grid;gap:10px;justify-items:end}
@@ -428,7 +426,17 @@ body{
   background: #f9fbff;
   color: var(--text);
 }
+.apptStatus.pending{
+  background: #fff3cd;
+  border-color: #ffe69c;
+  color: #8a6d00;
+}
 .apptStatus.upcoming{
+  background: #eaf2ff;
+  border-color: #cfe0ff;
+  color: #0b5ed7;
+}
+.apptStatus.accepted{
   background: #eaf2ff;
   border-color: #cfe0ff;
   color: #0b5ed7;
@@ -439,6 +447,11 @@ body{
   color: #137a2a;
 }
 .apptStatus.cancelled{
+  background: #ffecec;
+  border-color: #ffd0d0;
+  color: #b42318;
+}
+.apptStatus.rejected{
   background: #ffecec;
   border-color: #ffd0d0;
   color: #b42318;
@@ -602,7 +615,7 @@ body{
 }
 
 /* =========================
-   AUTH PAGES (BEAUTIFIED)
+   AUTH PAGES
 ========================= */
 .authWrap{
   min-height:100vh;
@@ -676,16 +689,12 @@ body{
 .roleTab{
   border:1px solid #dbe6ff;
   background: #f8fbff;
-  color: #1f2a44;              /* <-- text clearly visible */
+  color: #1f2a44;
   border-radius: 14px;
   padding: 10px;
   font-weight: 1000;
   cursor:pointer;
   transition: .15s;
-}
-
-.roleTab:disabled{
-  opacity: .6;
 }
 
 .roleTab:hover{
@@ -696,18 +705,6 @@ body{
   background: rgba(31,111,235,.14);
   border-color: rgba(31,111,235,.45);
   color: #0b5ed7;
-}
-
-
-.roleTab:hover{
-  transform: translateY(-1px);
-  border-color:#cfe0ff;
-}
-
-.roleTab.active{
-  background: rgba(31,111,235,.12);
-  border-color: rgba(31,111,235,.35);
-  color: var(--primary2);
 }
 
 .authForm{display:grid;gap: 12px;margin-top: 6px}
@@ -744,118 +741,91 @@ body{
 }
 
 /* =========================
-   DOCTOR CHAT PAGE
+   CHAT (PATIENT + DOCTOR)
 ========================= */
-.chatGrid{
+.chatLayout{
   display:grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 12px;
-  align-items: stretch;
+  align-items: start;
 }
 
-.chatList{padding: 14px;}
-.chatDoctorList{display:grid; gap: 10px; margin-top: 10px;}
-
-.chatDoctor{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  border:1px solid var(--line);
+.chatList{padding: 14px}
+.chatPerson{
+  width: 100%;
+  text-align:left;
+  border: 1px solid var(--line);
   background: #f9fbff;
   padding: 10px;
   border-radius: 16px;
+  display:flex;
+  gap:10px;
+  align-items:center;
   cursor:pointer;
-  text-align:left;
 }
-.chatDoctor:hover{border-color:#cfe0ff}
-.chatDoctor.active{
-  background: rgba(31,111,235,.10);
-  border-color: rgba(31,111,235,.35);
+.chatPerson:hover{border-color:#cfe0ff}
+.chatPerson.active{
+  background: #eaf2ff;
+  border-color: #cfe0ff;
 }
 
 .chatAvatar{
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 16px;
   border: 1px solid var(--line);
   object-fit: cover;
 }
-.chatDoctorInfo{min-width:0}
-.chatDoctorName{color: var(--text);font-weight: 1000;}
-.chatDoctorSub{color: var(--muted); font-weight: 800; font-size: 12px; margin-top: 2px;}
-.chatPill{
-  margin-left:auto;
-  font-size: 11px;
-  font-weight: 1000;
-  padding: 7px 9px;
-  border-radius: 999px;
-  border: 1px solid #c9eed6;
-  background: #e9f7ee;
-  color: #137a2a;
-  white-space: nowrap;
-}
+.chatPersonName{font-weight: 900; color: var(--text)}
+.chatPersonSub{font-size:12px; color: var(--muted); font-weight: 800}
 
-.chatBox{padding: 0; overflow:hidden; display:flex; flex-direction:column; min-height: 520px;}
-.chatHeader{
+.chatBox{
   padding: 14px;
-  border-bottom: 1px solid var(--line);
+  display:grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 520px;
+}
+.chatHeader{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  background: #ffffff;
+  align-items:center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
 }
-.chatHeaderLeft{display:flex; gap: 10px; align-items:center;}
-.chatAvatarLarge{
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  object-fit: cover;
-}
-.chatHeaderName{font-weight: 1000;}
-.chatHeaderSub{color: var(--muted); font-weight: 800; font-size: 12px; margin-top: 2px;}
-.chatOnline{color: var(--muted); font-weight: 900; font-size: 12px;}
 
 .chatMessages{
-  padding: 14px;
-  display:flex;
-  flex-direction:column;
-  gap: 10px;
+  padding: 12px 4px;
   overflow:auto;
-  background: linear-gradient(180deg, #ffffff, #f7faff);
-  flex: 1;
+  display:grid;
+  gap: 10px;
 }
 
-.chatMsgRow{display:flex;}
-.chatMsgRow.me{justify-content:flex-end;}
+.chatMsgRow{display:flex}
+.chatMsgRow.me{justify-content:flex-end}
+.chatMsgRow.them{justify-content:flex-start}
+
 .chatBubble{
   max-width: 70%;
-  padding: 10px 12px;
-  border-radius: 16px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: #f9fbff;
+  border-radius: 16px;
+  padding: 10px 12px;
 }
 .chatMsgRow.me .chatBubble{
-  background: rgba(31,111,235,.10);
-  border-color: rgba(31,111,235,.25);
+  background: #eaf2ff;
+  border-color: #cfe0ff;
 }
-.chatText{font-weight: 800; color: var(--text);}
-.chatTime{margin-top: 6px; font-size: 11px; color: var(--muted); font-weight: 800;}
+
+.chatText{font-weight: 800; color: var(--text)}
+.chatTime{margin-top:6px; font-size:11px; color: var(--muted); font-weight: 800}
 
 .chatInputRow{
   display:flex;
   gap: 10px;
-  padding: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--line);
-  background: #ffffff;
 }
-
-@media (max-width: 1100px){
-  .chatGrid{grid-template-columns: 1fr;}
-  .chatBox{min-height: 520px;}
-}
-
 
 /* =========================
    RESPONSIVE
@@ -872,6 +842,8 @@ body{
   .doctorTools{grid-template-columns: 1fr 1fr}
   .reportsTop{grid-template-columns: 1fr}
   .settingsGrid{grid-template-columns: 1fr}
+
+  .chatLayout{grid-template-columns: 1fr}
 }
 
 @media (max-width: 900px){
